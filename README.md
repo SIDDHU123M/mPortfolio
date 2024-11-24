@@ -1,6 +1,6 @@
 **Sidhartha Veldhandi**  
 **Web Developer | Programmer**  
-📞 919912339861 | 📧 sidharth69aio@gmail.com  
+sidharth69aio@gmail.com  
 🌐 [GitHub Portfolio](https://siddhu123m.github.io/Repositories)  
 
 ---
