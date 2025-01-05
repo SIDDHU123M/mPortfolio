@@ -215,11 +215,13 @@
                                     </button>
                               </form>
                               <div class="flex justify-center space-x-8 text-3xl mt-12">
-                                    <a href="https://github.com/SIDDHU123M" target="_blank" class="hover:text-grey-500 transition-colors"><i
-                                                class="bi bi-github"></i></a>
-                                    <a href="https://www.linkedin.com/in/sidharth69" target="_blank" class="hover:text-blue-500 transition-colors"><i
+                                    <a href="https://github.com/SIDDHU123M" target="_blank"
+                                          class="hover:text-grey-500 transition-colors"><i class="bi bi-github"></i></a>
+                                    <a href="https://www.linkedin.com/in/sidharth69" target="_blank"
+                                          class="hover:text-blue-500 transition-colors"><i
                                                 class="bi bi-linkedin"></i></a>
-                                    <a href="https://www.instagram.com/Sidhart_h69/" target = "_blank"  class="hover:text-red-600 transition-colors"><i
+                                    <a href="https://www.instagram.com/Sidhart_h69/" target="_blank"
+                                          class="hover:text-red-600 transition-colors"><i
                                                 class="bi bi-instagram"></i></a>
                               </div>
                         </div>
@@ -333,32 +335,35 @@
             animate();
 
             // Navigation
-            const sections = document.querySelectorAll('[data-section]');
-            const navLinks = document.querySelectorAll('[data-target]');
-            const mobileMenu = document.querySelector('.mobile-menu');
-            const menuBtn = document.getElementById('menuBtn');
+      const sections = document.querySelectorAll('[data-section]');
+      const navLinks = document.querySelectorAll('[data-target]');
+      const mobileMenu = document.querySelector('.mobile-menu');
+      const menuBtn = document.getElementById('menuBtn');
 
-            function showSection(sectionId) {
-                  sections.forEach(section => {
-                        section.classList.remove('active');
-                        if (section.dataset.section === sectionId) {
-                              section.classList.add('active');
-                        }
-                  });
-            }
-
-            navLinks.forEach(link => {
-                  link.addEventListener('click', (e) => {
-                        e.preventDefault();
-                        const target = link.dataset.target;
-                        showSection(target);
-                        mobileMenu.classList.remove('active');
-                  });
+      function showSection(sectionId) {
+            sections.forEach(section => {
+                  section.classList.remove('active');
+                  if (section.dataset.section === sectionId && sectionId !== 'home') {
+                        section.classList.add('active');
+                  }
+                  if (section.dataset.section === sectionId) {
+                        section.scrollIntoView({ behavior: 'smooth' , block: 'start', inline: 'nearest'});
+                  }
             });
+      }
 
-            menuBtn.addEventListener('click', () => {
-                  mobileMenu.classList.toggle('active');
+      navLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                  e.preventDefault();
+                  const target = link.dataset.target;
+                  showSection(target);
+                  mobileMenu.classList.remove('active');
             });
+      });
+
+      menuBtn.addEventListener('click', (e) => {
+            mobileMenu.classList.toggle('active');
+      });
 
             // Load Projects
             const projectsContainer = document.getElementById('projects-container');
@@ -366,18 +371,18 @@
                   const projectElement = document.createElement('div');
                   projectElement.className = 'bg-gray-900 rounded-xl overflow-hidden group hover:transform hover:scale-105 transition-all duration-300';
                   projectElement.innerHTML = `
-                <img src="${project.image}" alt="${project.title}" class="w-full h-48 object-cover">
-                <div class="p-6">
-                    <h3 class="text-2xl font-bold mb-4">${project.title}</h3>
-                    <p class="text-gray-400 mb-4">${project.description}</p>
-                    <div class="flex flex-wrap gap-2 mb-4">
-                        ${project.tech.map(t => `<span class="badge px-3 py-1 rounded-full text-sm">${t}</span>`).join('')}
-                    </div>
-                    <a href="${project.link}" class="text-indigo-400 hover:text-indigo-300 flex items-center gap-2">
-                        View Project <i class="bi bi-arrow-right"></i>
-                    </a>
-                </div>
-            `;
+                      <img src="${project.image}" alt="${project.title}" class="w-full h-48 object-cover">
+                      <div class="p-6">
+                          <h3 class="text-2xl font-bold mb-4">${project.title}</h3>
+                          <p class="text-gray-400 mb-4">${project.description}</p>
+                          <div class="flex flex-wrap gap-2 mb-4">
+                              ${project.tech.map(t => `<span class="badge px-3 py-1 rounded-full text-sm">${t}</span>`).join('')}
+                          </div>
+                          <a href="${project.link}" class="text-indigo-400 hover:text-indigo-300 flex items-center gap-2">
+                              View Project <i class="bi bi-arrow-right"></i>
+                          </a>
+                      </div>
+                  `;
                   projectsContainer.appendChild(projectElement);
             });
 
@@ -387,9 +392,9 @@
                   const badgeElement = document.createElement('div');
                   badgeElement.className = 'badge p-4 rounded-lg text-center hover:transform hover:scale-105 transition-all';
                   badgeElement.innerHTML = `
-                <i class="bi ${badge.icon} text-3xl ${badge.color} mb-2"></i>
-                <p class="text-sm">${badge.name}</p>
-            `;
+                      <i class="bi ${badge.icon} text-3xl ${badge.color} mb-2"></i>
+                      <p class="text-sm">${badge.name}</p>
+                  `;
                   badgesContainer.appendChild(badgeElement);
             });
 
@@ -425,6 +430,3 @@
                   renderer.setSize(window.innerWidth, window.innerHeight);
             });
       </script>
-</body>
-
-</html>
