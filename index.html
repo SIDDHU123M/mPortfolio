@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Dynamic 3D Portfolio</title>
+      <script src="https://unpkg.com/three@0.145.0/build/three.min.js"></script>
+      <script src="https://unpkg.com/gsap@3.12.2/dist/gsap.min.js"></script>
+      <script src="https://unpkg.com/@lottiefiles/lottie-player@latest/dist/lottie-player.js"></script>
+      <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css" rel="stylesheet">
+      <script src="https://cdn.tailwindcss.com"></script>
+      <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap"
+            rel="stylesheet">
+      <style>
+            * {
+                  margin: 0;
+                  padding: 0;
+                  box-sizing: border-box;
+                  font-family: 'Outfit', sans-serif;
+                  scroll-behavior: smooth;
+            }
+
+            body {
+                  overflow-x: hidden;
+                  background: #0a0a0a;
+                  color: #ffffff;
+            }
+
+            canvas {
+                  position: fixed;
+                  top: 0;
+                  left: 0;
+                  z-index: -1;
+            }
+
+            .content {
+                  position: relative;
+                  z-index: 1;
+            }
+
+            .gradient-text {
+                  background: linear-gradient(45deg, #6366f1, #8b5cf6, #d946ef);
+                  -webkit-background-clip: text;
+                  background-clip: text;
+                  color: transparent;
+            }
+
+            .nav-link {
+                  position: relative;
+            }
+
+            .nav-link::after {
+                  content: '';
+                  position: absolute;
+                  width: 0;
+                  height: 2px;
+                  bottom: -4px;
+                  left: 0;
+                  background: linear-gradient(45deg, #6366f1, #8b5cf6);
+                  transition: width 0.3s ease;
+            }
+
+            .nav-link:hover::after {
+                  width: 100%;
+            }
+
+            .section {
+                  opacity: 0;
+                  transform: translateY(20px);
+                  transition: all 0.6s ease;
+            }
+
+            .section.visible {
+                  opacity: 1;
+                  transform: translateY(0);
+            }
+
+            .badge {
+                  background: rgba(99, 102, 241, 0.1);
+                  border: 1px solid rgba(99, 102, 241, 0.2);
+                  transition: all 0.3s ease;
+            }
+
+            .badge:hover {
+                  background: rgba(99, 102, 241, 0.2);
+                  transform: translateY(-2px);
+            }
+
+            .mobile-menu {
+                  transform: translateX(100%);
+                  transition: transform 0.3s ease;
+            }
+
+            .mobile-menu.active {
+                  transform: translateX(0);
+            }
+
+            [data-section] {
+                  display: none;
+            }
+
+            [data-section].active {
+                  display: block;
+            }
+      </style>
+</head>
+
+<body>
+      <!-- Navigation -->
+      <nav class="fixed w-full p-6 z-50 bg-black/50 backdrop-blur-md">
+            <div class="container mx-auto flex justify-between items-center">
+                  <h1 class="text-2xl font-bold gradient-text">Portfolio</h1>
+                  <div class="hidden md:flex space-x-8">
+                        <a href="#" class="nav-link" data-target="home">Home</a>
+                        <a href="#" class="nav-link" data-target="work">Work</a>
+                        <a href="#" class="nav-link" data-target="about">About</a>
+                        <a href="#" class="nav-link" data-target="contact">Contact</a>
+                  </div>
+                  <button id="menuBtn" class="md:hidden text-white text-2xl">
+                        <i class="bi bi-list"></i>
+                  </button>
+            </div>
+      </nav>
+
+      <!-- Mobile Menu -->
+      <div class="mobile-menu fixed top-0 right-0 w-64 h-full bg-black/90 backdrop-blur-md z-40 md:hidden p-6">
+            <div class="flex flex-col space-y-6 mt-16">
+                  <a href="#" class="nav-link" data-target="home">Home</a>
+                  <a href="#" class="nav-link" data-target="work">Work</a>
+                  <a href="#" class="nav-link" data-target="about">About</a>
+                  <a href="#" class="nav-link" data-target="contact">Contact</a>
+            </div>
+      </div>
+
+      <div class="content">
+            <!-- Home Section -->
+            <section data-section="home" class="section min-h-screen flex items-center justify-center visible">
+                  <div class="text-center px-6">
+                        <h1 class="text-5xl md:text-7xl font-bold mb-6 gradient-text">Creative Developer</h1>
+                        <p class="text-xl md:text-2xl text-gray-400 mb-12">Crafting digital experiences through code</p>
+                        <div class="flex justify-center gap-4">
+                              <button class="bg-indigo-600 hover:bg-indigo-700 px-8 py-3 rounded-full transition-all"
+                                    data-target="work">
+                                    View Work
+                              </button>
+                              <button
+                                    class="border border-indigo-600 px-8 py-3 rounded-full hover:bg-indigo-600/10 transition-all"
+                                    data-target="contact">
+                                    Contact Me
+                              </button>
+                        </div>
+                  </div>
+            </section>
+
+            <!-- Work Section -->
+            <section data-section="work" class="section min-h-screen py-20 px-6">
+                  <div class="container mx-auto">
+                        <h2 class="text-4xl font-bold mb-12 gradient-text">Featured Work</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8" id="projects-container"></div>
+
+                        <div class="mt-20">
+                              <h3 class="text-2xl font-bold mb-8 gradient-text">Certifications & Badges</h3>
+                              <div class="grid grid-cols-2 md:grid-cols-4 gap-4" id="badges-container"></div>
+                        </div>
+                  </div>
+            </section>
+
+            <!-- About Section -->
+            <section data-section="about" class="section min-h-screen py-20 px-6">
+                  <div class="container mx-auto">
+                        <h2 class="text-4xl font-bold mb-12 gradient-text">About Me</h2>
+                        <div class="grid md:grid-cols-2 gap-12 items-center">
+                              <div class="space-y-6 text-gray-300">
+                                    <p>I'm a passionate developer focused on creating immersive web experiences using
+                                          cutting-edge technologies.</p>
+                                    <p>Specializing in Web development, Artificial intelligence and Machine Learning</p>
+                                    <div class="flex flex-wrap gap-4 mt-8">
+                                          <span class="badge px-4 py-2 rounded-full text-sm">React JS</span>
+                                          <span class="badge px-4 py-2 rounded-full text-sm">AI / ML</span>
+                                          <span class="badge px-4 py-2 rounded-full text-sm">Bug Bounty</span>
+                                          <span class="badge px-4 py-2 rounded-full text-sm">Reverse Eng</span>
+                                          <span class="badge px-4 py-2 rounded-full text-sm">TypeScript</span>
+                                    </div>
+                              </div>
+                              <div class="relative h-[400px]">
+                                    <lottie-player src="https://assets2.lottiefiles.com/packages/lf20_w51pcehl.json"
+                                          background="transparent" speed="1" loop autoplay></lottie-player>
+                              </div>
+                        </div>
+                  </div>
+            </section>
+
+            <!-- Contact Section -->
+            <section data-section="contact" class="section min-h-screen py-20 px-6">
+                  <div class="container mx-auto">
+                        <h2 class="text-4xl font-bold mb-12 gradient-text text-center">Get In Touch</h2>
+                        <div class="max-w-2xl mx-auto">
+                              <form class="space-y-6">
+                                    <div>
+                                          <input type="text" placeholder="Name"
+                                                class="w-full p-4 rounded-lg bg-gray-900 border border-gray-800 focus:border-indigo-600 outline-none">
+                                    </div>
+                                    <div>
+                                          <input type="email" placeholder="Email"
+                                                class="w-full p-4 rounded-lg bg-gray-900 border border-gray-800 focus:border-indigo-600 outline-none">
+                                    </div>
+                                    <div>
+                                          <textarea placeholder="Message" rows="6"
+                                                class="w-full p-4 rounded-lg bg-gray-900 border border-gray-800 focus:border-indigo-600 outline-none"></textarea>
+                                    </div>
+                                    <button type="submit"
+                                          class="w-full bg-indigo-600 hover:bg-indigo-700 py-4 rounded-lg transition-colors">
+                                          Send Message
+                                    </button>
+                              </form>
+                              <div class="flex justify-center space-x-8 text-3xl mt-12">
+                                    <a href="https://github.com/SIDDHU123M" target="_blank" class="hover:text-grey-500 transition-colors"><i
+                                                class="bi bi-github"></i></a>
+                                    <a href="https://www.linkedin.com/in/sidharth69" target="_blank" class="hover:text-blue-500 transition-colors"><i
+                                                class="bi bi-linkedin"></i></a>
+                                    <a href="https://www.instagram.com/Sidhart_h69/" target = "_blank"  class="hover:text-red-600 transition-colors"><i
+                                                class="bi bi-instagram"></i></a>
+                              </div>
+                        </div>
+                  </div>
+            </section>
+      </div>
+
+      <script>
+            // Data
+            const data = {
+                  projects: [
+                        {
+                              title: "Moviezzie",
+                              description: "Moviezzie is a web application designed to help users discover movies and TV shows.",
+                              tech: ["AlpineJS", "Tailwind", "Bootstrap"],
+                              image: "assets/Moviezzie.png",
+                              link: "https://github.com/SIDDHU123M/MoviesAPP"
+                        },
+                        {
+                              title: "AI Text Summarizer",
+                              description: "This is a Text Summarizer application that runs entirely in your browser without requiring any API key. It leverages advanced Natural Language Processing (NLP) techniques to summarize text input directly in the browser.",
+                              tech: ["Three.js", "Tensorflow", "AlpineJS"],
+                              image: "assets/textsum.png",
+                              link: "https://github.com/SIDDHU123M/TextSummarizer"
+                        },
+                        {
+                              title: "AI Assistant App",
+                              description: "This project showcases various repositories..",
+                              tech: ["Three.js", "Tailwind", "bootstrap"],
+                              image: "assets/repos.png",
+                              link: "https://github.com/SIDDHU123M/Repositories"
+                        }
+                  ],
+                  badges: [
+                        {
+                              name: "IBM",
+                              icon: "bi bi-cpu",
+                              color: "text-yellow-400"
+                        },
+                        {
+                              name: "Cisco",
+                              icon: "bi bi-router",
+                              color: "text-red-400"
+                        },
+                        {
+                              name: "Amazon",
+                              icon: "bi bi-cloud",
+                              color: "text-orange-400"
+                        },
+                        {
+                              name: "JavaScript",
+                              icon: "bi bi-file-code",
+                              color: "text-yellow-400"
+                        },
+                        {
+                              name: "React",
+                              icon: "bi bi-code-slash",
+                              color: "text-blue-400"
+                        },
+                        {
+                              name: "TypeScript",
+                              icon: "bi bi-file-code",
+                              color: "text-blue-400"
+                        },
+                        {
+                              name: "AI",
+                              icon: "bi bi-cpu-fill",
+                              color: "text-purple-400"
+                        },
+                        {
+                              name: "ML",
+                              icon: "bi bi-graph-up",
+                              color: "text-green-400"
+                        }
+                  ]
+            }
+
+            // Three.js Scene
+            const scene = new THREE.Scene();
+            const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+            const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            renderer.setSize(window.innerWidth, window.innerHeight);
+            document.body.appendChild(renderer.domElement);
+
+            // Create particles
+            const particlesGeometry = new THREE.BufferGeometry();
+            const particlesCount = 5000;
+            const posArray = new Float32Array(particlesCount * 3);
+
+            for (let i = 0; i < particlesCount * 3; i++) {
+                  posArray[i] = (Math.random() - 0.5) * 5;
+            }
+
+            particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+
+            const particlesMaterial = new THREE.PointsMaterial({
+                  size: 0.005,
+                  color: '#6366f1'
+            });
+
+            const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
+            scene.add(particlesMesh);
+
+            camera.position.z = 3;
+
+            function animate() {
+                  requestAnimationFrame(animate);
+                  particlesMesh.rotation.y += 0.001;
+                  renderer.render(scene, camera);
+            }
+            animate();
+
+            // Navigation
+            const sections = document.querySelectorAll('[data-section]');
+            const navLinks = document.querySelectorAll('[data-target]');
+            const mobileMenu = document.querySelector('.mobile-menu');
+            const menuBtn = document.getElementById('menuBtn');
+
+            function showSection(sectionId) {
+                  sections.forEach(section => {
+                        section.classList.remove('active');
+                        if (section.dataset.section === sectionId) {
+                              section.classList.add('active');
+                        }
+                  });
+            }
+
+            navLinks.forEach(link => {
+                  link.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        const target = link.dataset.target;
+                        showSection(target);
+                        mobileMenu.classList.remove('active');
+                  });
+            });
+
+            menuBtn.addEventListener('click', () => {
+                  mobileMenu.classList.toggle('active');
+            });
+
+            // Load Projects
+            const projectsContainer = document.getElementById('projects-container');
+            data.projects.forEach(project => {
+                  const projectElement = document.createElement('div');
+                  projectElement.className = 'bg-gray-900 rounded-xl overflow-hidden group hover:transform hover:scale-105 transition-all duration-300';
+                  projectElement.innerHTML = `
+                <img src="${project.image}" alt="${project.title}" class="w-full h-48 object-cover">
+                <div class="p-6">
+                    <h3 class="text-2xl font-bold mb-4">${project.title}</h3>
+                    <p class="text-gray-400 mb-4">${project.description}</p>
+                    <div class="flex flex-wrap gap-2 mb-4">
+                        ${project.tech.map(t => `<span class="badge px-3 py-1 rounded-full text-sm">${t}</span>`).join('')}
+                    </div>
+                    <a href="${project.link}" class="text-indigo-400 hover:text-indigo-300 flex items-center gap-2">
+                        View Project <i class="bi bi-arrow-right"></i>
+                    </a>
+                </div>
+            `;
+                  projectsContainer.appendChild(projectElement);
+            });
+
+            // Load Badges
+            const badgesContainer = document.getElementById('badges-container');
+            data.badges.forEach(badge => {
+                  const badgeElement = document.createElement('div');
+                  badgeElement.className = 'badge p-4 rounded-lg text-center hover:transform hover:scale-105 transition-all';
+                  badgeElement.innerHTML = `
+                <i class="bi ${badge.icon} text-3xl ${badge.color} mb-2"></i>
+                <p class="text-sm">${badge.name}</p>
+            `;
+                  badgesContainer.appendChild(badgeElement);
+            });
+
+            // Intersection Observer for animations
+            const observer = new IntersectionObserver((entries) => {
+                  entries.forEach(entry => {
+                        if (entry.isIntersecting) {
+                              entry.target.classList.add('visible');
+                        }
+                  });
+            }, { threshold: 0.1 });
+
+            document.querySelectorAll('.section').forEach(section => {
+                  observer.observe(section);
+            });
+
+            // Mouse move effect
+            document.addEventListener('mousemove', (event) => {
+                  const mouseX = event.clientX / window.innerWidth - 0.5;
+                  const mouseY = event.clientY / window.innerHeight - 0.5;
+
+                  gsap.to(particlesMesh.rotation, {
+                        x: mouseY * 0.5,
+                        y: mouseX * 0.5,
+                        duration: 2
+                  });
+            });
+
+            // Resize handler
+            window.addEventListener('resize', () => {
+                  camera.aspect = window.innerWidth / window.innerHeight;
+                  camera.updateProjectionMatrix();
+                  renderer.setSize(window.innerWidth, window.innerHeight);
+            });
+      </script>
+</body>
+
+</html>
